@@ -86,9 +86,9 @@ runs:
         echo "bash_ref ${{ steps.escape-quotes.outputs.base_ref }}"
         echo "head_ref ${{ steps.escape-quotes.outputs.head_ref}}"
         echo "url ${{ steps.escape-quotes.outputs.url }}"
-        git fetch --deepen=$all origin ${{ steps.escape-quotes.outputs.base_ref }}
-        git remote add upstream ${{ steps.escape-quotes.outputs.url }}
-        git fetch --deepen=$all upstream ${{ steps.escape-quotes.outputs.head_ref}}
+        git fetch --deepen=$all origin $'${{ steps.escape-quotes.outputs.base_ref }}'
+        git remote add upstream $'${{ steps.escape-quotes.outputs.url }}'
+        git fetch --deepen=$all upstream $'${{ steps.escape-quotes.outputs.head_ref }}'
         git checkout -b $'upstream/${{ steps.escape-quotes.outputs.head_ref}}' $'upstream/${{ steps.escape-quotes.outputs.head_ref}}'
       shell: bash
 
@@ -119,7 +119,7 @@ runs:
         docker pull gitstream/rules-engine:eladushTag
         echo "docker-pull-duration=$SECONDS" >> $GITHUB_OUTPUT
         SECONDS=0
-        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=upstream/${{ github.event.inputs.head_ref }} -e BASE_REF=${{ github.event.inputs.base_ref }} -e CLIENT_PAYLOAD=${{ github.event.inputs.client_payload }} -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine:eladushTag
+        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=$'upstream/${{ steps.escape-quotes.outputs.head_ref }}' -e BASE_REF=$'${{ steps.escape-quotes.outputs.base_ref }}' -e CLIENT_PAYLOAD=${{ github.event.inputs.client_payload }} -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine:eladushTag
         echo "docker-run-duration=$SECONDS" >> $GITHUB_OUTPUT
         echo "action-run-duration=$(($EPOCHSECONDS - ${{ steps.start.outputs.timestamp }}))" >> $GITHUB_OUTPUT
       shell: bash
