@@ -67,10 +67,10 @@ runs:
         echo "bash_ref ${bash_ref}"
         echo "head_ref ${head_ref}"
         echo "url ${url}"
-        git fetch --deepen=$all origin $'${bash_ref}'
-        git remote add upstream $'${url}'
-        git fetch --deepen=$all upstream $'${head_ref}'
-        git checkout -b $'upstream/${head_ref}' $'upstream/${head_ref}'
+        git fetch --deepen=$all origin "${bash_ref}"
+        git remote add upstream "${url}"
+        git fetch --deepen=$all upstream "${head_ref}"
+        git checkout -b $'upstream/"${head_ref}"' $'upstream/"${head_ref}"'
       shell: bash
     - name: Create cm folder
       id: create-cm-folder
