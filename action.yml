@@ -72,9 +72,9 @@ runs:
           const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteChars(core.getInput('url_arg'));
-          core.setOutput('base_ref', escapeSingleQuoteChars(base_ref));
-          core.setOutput('head_ref', escapeSingleQuoteChars(head_ref));
-          core.setOutput('url', escapeSingleQuoteChars(url));
+          core.setOutput('base_ref', base_ref);
+          core.setOutput('head_ref', head_ref);
+          core.setOutput('url', url);
 
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       run: |
