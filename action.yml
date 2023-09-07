@@ -56,40 +56,25 @@ runs:
         ref: ${{ github.event.inputs.base_ref }}
         path: 'gitstream/repo/'
         token: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).githubToken || github.token }}
-    - name: escape quotes
-      uses: actions/github-script@v3
-      id: escape-quotes
-      with:
-        script: |
-          const escapeSingleQuoteChars = (input: string): string => {
-            return (input || '').replace(/'/g, "\\'");
-          };
-
-          // Set output variables using the action context
-          const baseRefInput = ${{ github.event.inputs.base_ref }};
-          const headRefInput = ${{ github.event.inputs.head_ref }};
-          const urlInput = ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }};
-          core.setOutput('bash_ref', escapeSingleQuoteChars(baseRefInput));
-          core.setOutput('head_ref', escapeSingleQuoteChars(headRefInput));
-          core.setOutput('url', escapeSingleQuoteChars(urlInput));
 
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       env:
-        bash_ref: ${{steps.escape-quotes.outputs.bash_ref}}
-        head_ref: ${{steps.escape-quotes.outputs.head_ref}}
-        url: ${{steps.escape-quotes.outputs.url}}
+        BASE_REF: ${{ github.event.inputs.base_ref.replace(/'/g, "\\'") }}
+        HEAD_REF: ${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}
+        URL: ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl.replace(/'/g, "\\'") || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl.replace(/'/g, "\\'")) }}
       run: |
         all=2147483647
         cd gitstream
         cd repo
-        echo "bash_ref ${bash_ref}"
-        echo "head_ref ${head_ref}"
-        echo "url ${url}"
+        echo "bash_ref ${process.env.BASE_REF}"
+        echo "head_ref ${process.env.HEAD_REF}"
+        echo "url ${process.env.URL}"
         git fetch --deepen=$all origin "${bash_ref}"
         git remote add upstream "${url}"
         git fetch --deepen=$all upstream "${head_ref}"
         git checkout -b $'upstream/"${head_ref}"' $'upstream/"${head_ref}"'
       shell: bash
+
     - name: Create cm folder
       id: create-cm-folder
       shell: bash
