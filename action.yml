@@ -56,29 +56,29 @@ runs:
         ref: ${{ github.event.inputs.base_ref }}
         path: 'gitstream/repo/'
         token: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).githubToken || github.token }}
-      - name: escape quotes
-        uses: actions/github-script@v3
-        id: escape-quotes
-        env:
-          BASE_REF_INPUT: ${{ github.event.inputs.base_ref }}
-          HEAD_REF_INPUT: ${{ github.event.inputs.head_ref }}
-          URL_INPUT: ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }}
-        with:
-          script: |
-            const escapeSingleQuoteChars = (input: string): string => {
-              return (input || '').replace(/'/g, "\\'");
-            };
-            const bash_ref_var = escapeSingleQuoteChars(process.env.BASE_REF_INPUT);
-            const head_ref_var = escapeSingleQuoteChars(process.env.HEAD_REF_INPUT);
-            const url_var = escapeSingleQuoteChars(process.env.URL_INPUT);
-            echo "::set-output name=bash_ref::${{ bash_ref_var }}"
-            echo "::set-output name=head_ref::${{ head_ref_var }}"
-            echo "::set-output name=url::${{ url_var }}"
+    - name: escape quotes
+      uses: actions/github-script@v3
+      id: escape-quotes
+      env:
+        BASE_REF_INPUT: ${{ github.event.inputs.base_ref }}
+        HEAD_REF_INPUT: ${{ github.event.inputs.head_ref }}
+        URL_INPUT: ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }}
+      with:
+        script: |
+          const escapeSingleQuoteChars = (input: string): string => {
+            return (input || '').replace(/'/g, "\\'");
+          };
+          const bash_ref_var = escapeSingleQuoteChars(process.env.BASE_REF_INPUT);
+          const head_ref_var = escapeSingleQuoteChars(process.env.HEAD_REF_INPUT);
+          const url_var = escapeSingleQuoteChars(process.env.URL_INPUT);
+          echo "::set-output name=bash_ref::${{ bash_ref_var }}"
+          echo "::set-output name=head_ref::${{ head_ref_var }}"
+          echo "::set-output name=url::${{ url_var }}"
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       env:
-          bash_ref: ${{steps.escape-quotes.outputs.bash_ref}}
-          head_ref: ${{steps.escape-quotes.outputs.head_ref}}
-          url: ${{steps.escape-quotes.outputs.url}}       
+        bash_ref: ${{steps.escape-quotes.outputs.bash_ref}}
+        head_ref: ${{steps.escape-quotes.outputs.head_ref}}
+        url: ${{steps.escape-quotes.outputs.url}}
       run: |
         all=2147483647
         cd gitstream
