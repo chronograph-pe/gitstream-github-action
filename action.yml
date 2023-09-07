@@ -61,9 +61,9 @@ runs:
         all=2147483647
         cd gitstream
         cd repo
-        bash_ref=${{ github.event.inputs.base_ref }} | sed "s/'/\\\'/g"
-        head_ref=${{ github.event.inputs.head_ref }} | sed "s/'/\\\'/g"
-        url=${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }} | sed "s/'/\\\'/g"
+        bash_ref=${{ github.event.inputs.base_ref }} | tr \' \\\'
+        head_ref=${{ github.event.inputs.head_ref }} | tr \' \\\'
+        url=${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }} | tr \' \\\'
         echo "bash_ref ${bash_ref}"
         echo "head_ref ${head_ref}"
         echo "url ${url}"
