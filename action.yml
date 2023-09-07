@@ -61,13 +61,17 @@ runs:
       id: escape-quotes
       uses: actions/github-script@v3
       with:
+        base_ref_arg: ${{ github.event.inputs.base_ref }}
+        head_ref_arg: ${{ github.event.inputs.head_ref }}
+        url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
+
         script: |
           function escapeSingleQuoteChars(input) {
             return (input || '').replace(/'/g, "\\'");
           };
-          const base_ref = '${{ github.event.inputs.base_ref }}';
-          const head_ref = '${{ github.event.inputs.head_ref }}';
-          const url = '${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}';
+          const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
+          const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
+          const url = escapeSingleQuoteChars(core.getInput('url_arg'));
           core.setOutput('base_ref', escapeSingleQuoteChars(base_ref));
           core.setOutput('head_ref', escapeSingleQuoteChars(head_ref));
           core.setOutput('url', escapeSingleQuoteChars(url));
