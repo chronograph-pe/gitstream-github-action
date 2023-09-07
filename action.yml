@@ -61,7 +61,9 @@ runs:
         all=2147483647
         cd gitstream
         cd repo
-        git fetch --deepen=$all origin $'${{ github.event.inputs.base_ref.replace(/'/g, "\\'") }}'
+        bash_ref=${{ github.event.inputs.base_ref }} | sed "s/'/\\\'/g"
+        echo $bash_ref
+        git fetch --deepen=$all origin $bash_ref
         git remote add upstream $'${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl).replace(/'/g, "\\'") }}'
         git fetch --deepen=$all upstream $'${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}'
         git checkout -b $'upstream/${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}' $'upstream/${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}'
