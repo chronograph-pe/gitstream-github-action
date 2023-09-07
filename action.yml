@@ -63,9 +63,12 @@ runs:
         cd repo
         bash_ref=${{ github.event.inputs.base_ref }} | sed "s/'/\\\'/g"
         head_ref=${{ github.event.inputs.head_ref }} | sed "s/'/\\\'/g"
-        echo $bash_ref
+        url=${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }} | sed "s/'/\\\'/g"
+        echo "bash_ref ${bash_ref}"
+        echo "head_ref ${head_ref}"
+        echo "url ${url}"
         git fetch --deepen=$all origin $'$bash_ref'
-        git remote add upstream ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }}
+        git remote add upstream $'$url'
         git fetch --deepen=$all upstream $'$head_ref'
         git checkout -b $'upstream/$head_ref' $'upstream/$head_ref'
       shell: bash
