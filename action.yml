@@ -62,11 +62,12 @@ runs:
         cd gitstream
         cd repo
         bash_ref=${{ github.event.inputs.base_ref }} | sed "s/'/\\\'/g"
+        head_ref=${{ github.event.inputs.head_ref }} | sed "s/'/\\\'/g"
         echo $bash_ref
-        git fetch --deepen=$all origin $bash_ref
-        git remote add upstream $'${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl).replace(/'/g, "\\'") }}'
-        git fetch --deepen=$all upstream $'${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}'
-        git checkout -b $'upstream/${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}' $'upstream/${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}'
+        git fetch --deepen=$all origin $'$bash_ref'
+        git remote add upstream ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }}
+        git fetch --deepen=$all upstream $'$head_ref'
+        git checkout -b $'upstream/$head_ref' $'upstream/$head_ref'
       shell: bash
     - name: Create cm folder
       id: create-cm-folder
