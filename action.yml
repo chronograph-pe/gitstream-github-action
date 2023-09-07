@@ -65,9 +65,9 @@ runs:
           function escapeSingleQuoteChars(input) {
             return (input || '').replace(/'/g, "\\'");
           };
-          const base_ref = ${{ github.event.inputs.base_ref }};
-          const head_ref = ${{ github.event.inputs.head_ref }};
-          const url = ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }};
+          const base_ref = '${{ github.event.inputs.base_ref }}';
+          const head_ref = '${{ github.event.inputs.head_ref }}';
+          const url = '${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}';
           core.setOutput('base_ref', escapeSingleQuoteChars(base_ref));
           core.setOutput('head_ref', escapeSingleQuoteChars(head_ref));
           core.setOutput('url', escapeSingleQuoteChars(url));
