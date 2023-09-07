@@ -62,8 +62,8 @@ runs:
         cd gitstream
         cd repo
         bash_ref=$(echo "${{ github.event.inputs.base_ref }}" | tr \' \\\')
-        head_ref=${{ github.event.inputs.head_ref }} 
-        url=${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }} 
+        head_ref=$(echo "${{ github.event.inputs.head_ref }}" | tr \' \\\')
+        url=$(echo "${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }} " | tr \' \\\')
         echo "bash_ref ${bash_ref}"
         echo "head_ref ${head_ref}"
         echo "url ${url}"
