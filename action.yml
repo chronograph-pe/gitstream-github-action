@@ -57,18 +57,26 @@ runs:
         path: 'gitstream/repo/'
         token: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).githubToken || github.token }}
 
+    - name: Escape single quotes
+      id: escape-quotes
+      uses: actions/github-script@v3
+      with:
+        script: |
+          const base_ref = ${{ github.event.inputs.base_ref.replace(/'/g, "\\'") }};
+          const head_ref = ${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }};
+          const url = ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl.replace(/'/g, "\\'") || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl.replace(/'/g, "\\'")) }};
+          core.setOutput('base_ref', base_ref);
+          core.setOutput('head_ref', head_ref);
+          core.setOutput('url', url);
+
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
-      env:
-        BASE_REF: ${{ github.event.inputs.base_ref.replace(/'/g, "\\'") }}
-        HEAD_REF: ${{ github.event.inputs.head_ref.replace(/'/g, "\\'") }}
-        URL: ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl.replace(/'/g, "\\'") || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl.replace(/'/g, "\\'")) }}
       run: |
         all=2147483647
         cd gitstream
         cd repo
-        echo "bash_ref ${process.env.BASE_REF}"
-        echo "head_ref ${process.env.HEAD_REF}"
-        echo "url ${process.env.URL}"
+        echo "bash_ref ${steps.escape-quotes.outputs.base_ref}"
+        echo "head_ref ${steps.escape-quotes.outputs.head_ref}"
+        echo "url ${steps.escape-quotes.outputs.url}"
         git fetch --deepen=$all origin "${bash_ref}"
         git remote add upstream "${url}"
         git fetch --deepen=$all upstream "${head_ref}"
