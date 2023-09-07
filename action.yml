@@ -59,10 +59,6 @@ runs:
     - name: escape quotes
       uses: actions/github-script@v3
       id: escape-quotes
-      env:
-        BASE_REF_INPUT: ${{ github.event.inputs.base_ref }}
-        HEAD_REF_INPUT: ${{ github.event.inputs.head_ref }}
-        URL_INPUT: ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }}
       with:
         script: |
           const escapeSingleQuoteChars = (input: string): string => {
@@ -70,9 +66,12 @@ runs:
           };
 
           // Set output variables using the action context
-          core.setOutput('bash_ref', escapeSingleQuoteChars(process.env.BASE_REF_INPUT));
-          core.setOutput('head_ref', escapeSingleQuoteChars(process.env.HEAD_REF_INPUT));
-          core.setOutput('url', escapeSingleQuoteChars(process.env.URL_INPUT));
+          const baseRefInput = ${{ github.event.inputs.base_ref }};
+          const headRefInput = ${{ github.event.inputs.head_ref }};
+          const urlInput = ${{ (fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl) }};
+          core.setOutput('bash_ref', escapeSingleQuoteChars(baseRefInput));
+          core.setOutput('head_ref', escapeSingleQuoteChars(headRefInput));
+          core.setOutput('url', escapeSingleQuoteChars(urlInput));
 
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       env:
