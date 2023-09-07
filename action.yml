@@ -68,12 +68,12 @@ runs:
           const escapeSingleQuoteChars = (input: string): string => {
             return (input || '').replace(/'/g, "\\'");
           };
-          const bash_ref_var = escapeSingleQuoteChars(process.env.BASE_REF_INPUT);
-          const head_ref_var = escapeSingleQuoteChars(process.env.HEAD_REF_INPUT);
-          const url_var = escapeSingleQuoteChars(process.env.URL_INPUT);
-          echo "::set-output name=bash_ref::${{ bash_ref_var }}"
-          echo "::set-output name=head_ref::${{ head_ref_var }}"
-          echo "::set-output name=url::${{ url_var }}"
+
+          // Set output variables using the action context
+          core.setOutput('bash_ref', escapeSingleQuoteChars(process.env.BASE_REF_INPUT));
+          core.setOutput('head_ref', escapeSingleQuoteChars(process.env.HEAD_REF_INPUT));
+          core.setOutput('url', escapeSingleQuoteChars(process.env.URL_INPUT));
+
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       env:
         bash_ref: ${{steps.escape-quotes.outputs.bash_ref}}
