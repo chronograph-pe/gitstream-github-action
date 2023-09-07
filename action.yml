@@ -62,7 +62,7 @@ runs:
       uses: actions/github-script@v3
       with:
         script: |
-          const escapeSingleQuoteChars = (input: string): string => {
+          const escapeSingleQuoteChars = input => {
             return (input || '').replace(/'/g, "\\'");
           };
           const base_ref = ${{ github.event.inputs.base_ref }};
