@@ -73,6 +73,10 @@ runs:
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteChars(core.getInput('url_arg'));
           const client_payload = escapeSingleQuoteChars(core.getInput('client_payload_arg'));
+          core.info(`base_ref ${base_ref}`)
+          core.info(`head_ref ${head_ref}`)
+          core.info(`url ${url}`)
+          core.info(`client_payload ${client_payload}`)
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
           core.setOutput('url', url);
