@@ -70,7 +70,7 @@ runs:
             return (input || '').replace(/'/g, "\\'");
           };
           function escapeDoubleQuoteChars(input) {
-            return (input || '').replace(/\\"/g, "\\\\"");
+            return (input || '').replace(/\\"/g, '\\\\"');
           };
           const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
