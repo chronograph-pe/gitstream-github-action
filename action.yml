@@ -96,10 +96,10 @@ runs:
         mkdir cm
     - name: Checkout cm repo
       uses: actions/checkout@v3
-      if: ${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).hasCmRepo == true }}
+      if: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).hasCmRepo == true }}
       with:
-        repository: '${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).owner }}/${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).cmRepo }}'
-        ref: ${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).cmRepoRef }}
+        repository: '${{ fromJSON(fromJSON(github.event.inputs.client_payload)).owner }}/${{ fromJSON(fromJSON(github.event.inputs.client_payload)).cmRepo }}'
+        ref: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).cmRepoRef }}
         path: 'gitstream/cm/'
     - name: Run The Action
       id: gitstream-action
