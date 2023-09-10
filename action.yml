@@ -64,6 +64,7 @@ runs:
         base_ref_arg: ${{ github.event.inputs.base_ref }}
         head_ref_arg: ${{ github.event.inputs.head_ref }}
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
+        client_payload_arg: ${{ github.event.inputs.client_payload }}
         script: |
           function escapeSingleQuoteChars(input) {
             return (input || '').replace(/'/g, "\\'");
@@ -71,9 +72,11 @@ runs:
           const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteChars(core.getInput('url_arg'));
+          const client_payload = escapeSingleQuoteChars(core.getInput('client_payload_arg'));
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
           core.setOutput('url', url);
+          core.setOutput('client_payload', client_payload);
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       run: |
         all=2147483647
@@ -93,10 +96,10 @@ runs:
         mkdir cm
     - name: Checkout cm repo
       uses: actions/checkout@v3
-      if: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).hasCmRepo == true }}
+      if: ${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).hasCmRepo == true }}
       with:
-        repository: '${{ fromJSON(fromJSON(github.event.inputs.client_payload)).owner }}/${{ fromJSON(fromJSON(github.event.inputs.client_payload)).cmRepo }}'
-        ref: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).cmRepoRef }}
+        repository: '${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).owner }}/${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).cmRepo }}'
+        ref: ${{ fromJSON(fromJSON(steps.escape-quotes.outputs.client_payload)).cmRepoRef }}
         path: 'gitstream/cm/'
     - name: Run The Action
       id: gitstream-action
@@ -112,7 +115,7 @@ runs:
         docker pull gitstream/rules-engine:latest
         echo "docker-pull-duration=$SECONDS" >> $GITHUB_OUTPUT
         SECONDS=0
-        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=$'upstream/${{ steps.escape-quotes.outputs.head_ref }}' -e BASE_REF=$'${{ steps.escape-quotes.outputs.base_ref }}' -e CLIENT_PAYLOAD=$'${{ github.event.inputs.client_payload }}' -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine
+        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=$'upstream/${{ steps.escape-quotes.outputs.head_ref }}' -e BASE_REF=$'${{ steps.escape-quotes.outputs.base_ref }}' -e CLIENT_PAYLOAD=$'${{ steps.escape-quotes.outputs.client_payload }}' -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine
         echo "docker-run-duration=$SECONDS" >> $GITHUB_OUTPUT
         echo "action-run-duration=$(($EPOCHSECONDS - ${{ steps.start.outputs.timestamp }}))" >> $GITHUB_OUTPUT
       shell: bash
