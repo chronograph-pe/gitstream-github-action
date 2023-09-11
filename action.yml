@@ -84,7 +84,7 @@ runs:
           const base_ref = escapeSingleQuoteInString(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteInString(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
-          const client_payload = escapeSingleQuoteInJson(core.getInput('payload_arg'));
+          const client_payload = core.getInput('payload_arg');
           core.info(`client_payload: ${client_payload}`);
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
