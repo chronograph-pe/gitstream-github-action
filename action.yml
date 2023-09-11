@@ -69,14 +69,10 @@ runs:
           function escapeSingleQuoteChars(input) {
             return (input || '').replace(/'/g, "\\'");
           };
-          function escapeDoubleQuoteChars(input) {
-            return (input || '').replace(/\\"/g, '\\\\"');
-          };
           const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteChars(core.getInput('url_arg'));
-          let client_payload = escapeSingleQuoteChars(core.getInput('client_payload_arg'));
-          client_payload = escapeDoubleQuoteChars(client_payload);
+          const client_payload = escapeSingleQuoteChars(core.getInput('client_payload_arg'));
           core.info(`base_ref ${base_ref}`)
           core.info(`head_ref ${head_ref}`)
           core.info(`url ${url}`)
