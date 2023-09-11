@@ -66,13 +66,26 @@ runs:
         payload_arg: ${{ github.event.inputs.client_payload }}
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
-          function escapeSingleQuoteChars(input) {
-            return (input || '').replace(/'/g, '\\\'');
+          function escapeSingleQuoteInString(input) {
+            return (input || '').replace(/'/g, "\\'");
           };
-          const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
-          const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
-          const url = escapeSingleQuoteChars(core.getInput('url_arg'));
-          const client_payload = escapeSingleQuoteChars(core.getInput('payload_arg'));
+
+          function escapeSingleQuoteInJson(jsonString) {
+            const jsonObject = fromJSON(fromJSON(jsonString));
+
+            // Escape single quotes within string values
+            for (const key in jsonObject) {
+              if (typeof jsonObject[key] === 'string') {
+                jsonObject[key] = escapeSingleQuoteInString(jsonObject[key]);
+              }
+            }
+
+            return toJSON(toJSON(jsonObject));
+          };
+          const base_ref = escapeSingleQuoteInString(core.getInput('base_ref_arg'));
+          const head_ref = escapeSingleQuoteInString(core.getInput('head_ref_arg'));
+          const url = escapeSingleQuoteInString(core.getInput('url_arg'));
+          const client_payload = escapeSingleQuoteInJson(core.getInput('payload_arg'));
           core.info(`base_ref ${base_ref}`)
           core.info(`head_ref ${head_ref}`)
           core.info(`url ${url}`)
