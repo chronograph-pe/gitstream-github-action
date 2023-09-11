@@ -71,17 +71,20 @@ runs:
           };
 
           function escapeSingleQuoteInJson(jsonString) {
+            const jsonObject = JSON.parse(jsonString);
             // Escape single quotes within string values
             for (const key in jsonObject) {
               if (typeof jsonObject[key] === 'string') {
                 jsonObject[key] = escapeSingleQuoteInString(jsonObject[key]);
               }
             }
+
+            return JSON.stringify(jsonObject);
           };
           const base_ref = escapeSingleQuoteInString(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteInString(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
-          const client_payload = JSON.parse(core.getInput('payload_arg'));
+          const client_payload = escapeSingleQuoteInJson(core.getInput('payload_arg'));
           core.info(`base_ref: ${core.getInput('base_ref_arg')} and after ${base_ref}`)
           core.info(`head_ref: ${core.getInput('head_ref_arg')} and after ${head_ref}`)
           core.info(`url: ${core.getInput('url_arg')} and after ${url}`)
