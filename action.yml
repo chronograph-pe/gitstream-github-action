@@ -63,6 +63,7 @@ runs:
       with:
         base_ref_arg: ${{ github.event.inputs.base_ref }}
         head_ref_arg: ${{ github.event.inputs.head_ref }}
+        payload_arg: ${{ github.event.inputs.client_payload }}
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
           function escapeSingleQuoteChars(input) {
@@ -74,7 +75,7 @@ runs:
           core.info(`base_ref ${base_ref}`)
           core.info(`head_ref ${head_ref}`)
           core.info(`url ${url}`)
-          core.info(`client_payload ${github.event.inputs.client_payload}`)
+          core.info(`client_payload ${payload_arg}`)
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
           core.setOutput('url', url);
