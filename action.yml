@@ -71,6 +71,10 @@ runs:
           const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteChars(core.getInput('url_arg'));
+          core.info(`base_ref ${base_ref}`)
+          core.info(`head_ref ${head_ref}`)
+          core.info(`url ${url}`)
+          core.info(`client_payload ${github.event.inputs.client_payload}`)
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
           core.setOutput('url', url);
