@@ -67,7 +67,7 @@ runs:
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
           function escapeSingleQuoteChars(input) {
-            return (input || '').replace(/'/g, '\\'');
+            return (input || '').replace(/'/g, '\\\'');
           };
           const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
