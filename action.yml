@@ -63,7 +63,7 @@ runs:
       with:
         base_ref_arg: ${{ github.event.inputs.base_ref }}
         head_ref_arg: ${{ github.event.inputs.head_ref }}
-        payload_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)) }}
+        payload_arg: ${{ github.event.inputs.client_payload }}
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
           function escapeSingleQuoteInString(input) {
@@ -81,7 +81,7 @@ runs:
           const base_ref = escapeSingleQuoteInString(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteInString(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
-          const client_payload = escapeSingleQuoteInJson(core.getInput('payload_arg'));
+          const client_payload = JSON.parse(core.getInput('payload_arg'));
           core.info(`base_ref: ${core.getInput('base_ref_arg')} and after ${base_ref}`)
           core.info(`head_ref: ${core.getInput('head_ref_arg')} and after ${head_ref}`)
           core.info(`url: ${core.getInput('url_arg')} and after ${url}`)
