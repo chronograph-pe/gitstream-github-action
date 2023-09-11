@@ -75,7 +75,7 @@ runs:
           core.info(`base_ref ${base_ref}`)
           core.info(`head_ref ${head_ref}`)
           core.info(`url ${url}`)
-          core.info(`client_payload ${payload_arg}`)
+          core.info(`client_payload ${core.getInput('payload_arg')}`)
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
           core.setOutput('url', url);
