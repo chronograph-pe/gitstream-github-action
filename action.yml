@@ -67,18 +67,21 @@ runs:
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
           function escapeSingleQuoteChars(input) {
-            return (input || '').replace(/'/g, "\\'");
+            return (input || '').replace(/['`]/g, '\\$&');
           };
           const base_ref = escapeSingleQuoteChars(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteChars(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteChars(core.getInput('url_arg'));
+          const client_payload = escapeSingleQuoteChars(core.getInput('payload_arg'));
           core.info(`base_ref ${base_ref}`)
           core.info(`head_ref ${head_ref}`)
           core.info(`url ${url}`)
-          core.info(`client_payload ${core.getInput('payload_arg')}`)
+          core.info(`origin client_payload ${core.getInput('payload_arg')}`)
+          core.info(`client_payload ${client_payload}`)
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
           core.setOutput('url', url);
+          core.setOutput('client_payload', client_payload);
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       run: |
         all=2147483647
@@ -117,7 +120,7 @@ runs:
         docker pull gitstream/rules-engine:latest
         echo "docker-pull-duration=$SECONDS" >> $GITHUB_OUTPUT
         SECONDS=0
-        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=$'upstream/${{ steps.escape-quotes.outputs.head_ref }}' -e BASE_REF=$'${{ steps.escape-quotes.outputs.base_ref }}' -e CLIENT_PAYLOAD=${{ github.event.inputs.client_payload }} -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine
+        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=$'upstream/${{ steps.escape-quotes.outputs.head_ref }}' -e BASE_REF=$'${{ steps.escape-quotes.outputs.base_ref }}' -e CLIENT_PAYLOAD=${{ steps.escape-quotes.outputs.client_payload }} -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine
         echo "docker-run-duration=$SECONDS" >> $GITHUB_OUTPUT
         echo "action-run-duration=$(($EPOCHSECONDS - ${{ steps.start.outputs.timestamp }}))" >> $GITHUB_OUTPUT
       shell: bash
