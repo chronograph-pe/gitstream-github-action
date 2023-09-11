@@ -71,7 +71,7 @@ runs:
           };
 
           function escapeSingleQuoteInJson(jsonString) {
-            const jsonObject = fromJSON(fromJSON(jsonString));
+            const jsonObject = JSON.parse(jsonString);
 
             // Escape single quotes within string values
             for (const key in jsonObject) {
@@ -80,7 +80,7 @@ runs:
               }
             }
 
-            return toJSON(toJSON(jsonObject));
+            return JSON.stringify(jsonObject);
           };
           const base_ref = escapeSingleQuoteInString(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteInString(core.getInput('head_ref_arg'));
