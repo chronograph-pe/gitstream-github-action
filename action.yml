@@ -70,23 +70,10 @@ runs:
             return (input || '').replace(/['`]/g, '\\$&');;
           };
 
-          function escapeSingleQuoteInJson(jsonString) {
-            core.info(`jsonString: ${jsonString}`);
-            const jsonObject = JSON.parse(jsonString);
-            core.info(`jsonObject: ${jsonObject}`);
-            // Escape single quotes within string values
-            for (const key in jsonObject) {
-              if (typeof jsonObject[key] === 'string') {
-                jsonObject[key] = escapeSingleQuoteInString(jsonObject[key]);
-              }
-            }
-            core.info(`jsonObject after: ${jsonObject}`);
-            return JSON.stringify(jsonObject);
-          };
           const base_ref = escapeSingleQuoteInString(core.getInput('base_ref_arg'));
           const head_ref = escapeSingleQuoteInString(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
-          const client_payload = escapeSingleQuoteInJson(core.getInput('payload_arg'));
+          const client_payload = escapeSingleQuoteInString(core.getInput('payload_arg'));
           core.info(`client_payload: ${client_payload}`);
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
@@ -130,7 +117,7 @@ runs:
         docker pull gitstream/rules-engine:eladushTag
         echo "docker-pull-duration=$SECONDS" >> $GITHUB_OUTPUT
         SECONDS=0
-        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=$'upstream/${{ steps.escape-quotes.outputs.head_ref }}' -e BASE_REF=$'${{ steps.escape-quotes.outputs.base_ref }}' -e CLIENT_PAYLOAD='${{ steps.escape-quotes.outputs.client_payload }}' -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine:eladushTag
+        docker run --env-file $env_file -v $(pwd)/gitstream:/code -e USE_CACHE=${{ steps.cache-gitstream-results.outputs.cache-hit }} -e HEAD_REF=$'upstream/${{ steps.escape-quotes.outputs.head_ref }}' -e BASE_REF=$'${{ steps.escape-quotes.outputs.base_ref }}' -e CLIENT_PAYLOAD=${{ steps.escape-quotes.outputs.client_payload }} -e RULES_RESOLVER_URL=${{ github.event.inputs.resolver_url }} -e RULES_RESOLVER_TOKEN=${{ github.event.inputs.resolver_token }} -e DEBUG_MODE=${{ github.event.inputs.debug_mode }} gitstream/rules-engine:eladushTag
         echo "docker-run-duration=$SECONDS" >> $GITHUB_OUTPUT
         echo "action-run-duration=$(($EPOCHSECONDS - ${{ steps.start.outputs.timestamp }}))" >> $GITHUB_OUTPUT
       shell: bash
