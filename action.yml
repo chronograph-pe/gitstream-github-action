@@ -70,12 +70,12 @@ runs:
             return (input || '').replace(/['`]/g, "\\$&");
           };
 
-          function escapeAllQuoteInString(input) {
-            return (input || '').replace(/'/g, "\\\\'").replace(/`/g, "\\`");
+          function replaceQuotesWithPlaceHolders(input) {
+            return (input || '').replace(/'/g, "gs-apostrophe-").replace(/`/g, "gs-grave-accent");
           };
 
-          const base_ref = escapeAllQuoteInString(core.getInput('base_ref_arg'));
-          const head_ref = escapeAllQuoteInString(core.getInput('head_ref_arg'));
+          const base_ref = replaceQuotesWithPlaceHolders(core.getInput('base_ref_arg'));
+          const head_ref = replaceQuotesWithPlaceHolders(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
           const client_payload = escapeSingleQuoteInString(core.getInput('payload_arg'));
           core.info(`client_payload: ${client_payload}`);
