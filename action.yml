@@ -71,7 +71,7 @@ runs:
           };
 
           function escapeAllQuoteInString(input) {
-            return (input || '').replace(/'/g, "\\'").replace(/`/g, "\\\\`");
+            return (input || '').replace(/'/g, "\\\\'").replace(/`/g, "\\`");
           };
 
           const base_ref = escapeAllQuoteInString(core.getInput('base_ref_arg'));
