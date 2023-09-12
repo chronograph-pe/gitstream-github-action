@@ -88,10 +88,10 @@ runs:
         all=2147483647
         cd gitstream
         cd repo
-        git fetch --deepen=$all origin $"${{ steps.escape-quotes.outputs.base_ref }}"
-        git remote add upstream $"${{ steps.escape-quotes.outputs.url }}"
-        git fetch --deepen=$all upstream $"${{ steps.escape-quotes.outputs.head_ref }}"
-        git checkout -b $"upstream/${{ steps.escape-quotes.outputs.head_ref}}" $"upstream/${{ steps.escape-quotes.outputs.head_ref}}"
+        git fetch --deepen=$all origin $'${{ steps.escape-quotes.outputs.base_ref }}'
+        git remote add upstream $'${{ steps.escape-quotes.outputs.url }}'
+        git fetch --deepen=$all upstream $'${{ steps.escape-quotes.outputs.head_ref }}'
+        git checkout -b $'upstream/${{ steps.escape-quotes.outputs.head_ref}}' $'upstream/${{ steps.escape-quotes.outputs.head_ref}}'
       shell: bash
 
     - name: Create cm folder
