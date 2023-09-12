@@ -67,11 +67,15 @@ runs:
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
           function escapeSingleQuoteInString(input) {
-            return (input || '').replace(/['"`]/g, "\\$&");;
+            return (input || '').replace(/['`]/g, "\\$&");;
           };
 
-          const base_ref = escapeSingleQuoteInString(core.getInput('base_ref_arg'));
-          const head_ref = escapeSingleQuoteInString(core.getInput('head_ref_arg'));
+          function escapeAllQuoteInString(input) {
+            return (input || '').replace(/['`"]/g, "\\$&");;
+          };
+
+          const base_ref = escapeAllQuoteInString(core.getInput('base_ref_arg'));
+          const head_ref = escapeAllQuoteInString(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
           const client_payload = escapeSingleQuoteInString(core.getInput('payload_arg'));
           core.info(`client_payload: ${client_payload}`);
