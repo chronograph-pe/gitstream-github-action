@@ -67,11 +67,11 @@ runs:
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
           function escapeSingleQuoteInString(input) {
-            return (input || '').replace(/['`]/g, "\\$&");;
+            return (input || '').replace(/`/g, "\\`").replace(/'/g, "\\\\'");
           };
 
           function escapeAllQuoteInString(input) {
-            return (input || '').replace(/['`"]/g, "\\$&");;
+            return (input || '').replace(/['`"]/g, "\\$&");
           };
 
           const base_ref = escapeAllQuoteInString(core.getInput('base_ref_arg'));
