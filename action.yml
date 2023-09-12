@@ -70,12 +70,16 @@ runs:
             return (input || '').replace(/['`]/g, "\\$&");
           };
 
+          function escapeSingleQuote(input) {
+            return (input || '').replace(/'/g, "\\'");
+          };
+
           function replaceQuotesWithPlaceHolders(input) {
             return (input || '').replace(/'/g, "gs-apostrophe-").replace(/`/g, "gs-grave-accent");
           };
 
-          const base_ref = replaceQuotesWithPlaceHolders(core.getInput('base_ref_arg'));
-          const head_ref = replaceQuotesWithPlaceHolders(core.getInput('head_ref_arg'));
+          const base_ref = escapeSingleQuote(core.getInput('base_ref_arg'));
+          const head_ref = escapeSingleQuote(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
           const client_payload = escapeSingleQuoteInString(core.getInput('payload_arg'));
           core.info(`client_payload: ${client_payload}`);
