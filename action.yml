@@ -78,10 +78,10 @@ runs:
           const head_ref = escapeApostrophe(core.getInput('head_ref_arg'));
           const url = escapeSingleQuoteInString(core.getInput('url_arg'));
           const client_payload = escapeSingleQuoteInString(core.getInput('payload_arg'));
-          core.info(`client_payload: ${client_payload}`);
           core.setOutput('base_ref', base_ref);
           core.setOutput('head_ref', head_ref);
           core.setOutput('url', url);
+          core.setOutput('client_payload', client_payload);
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       run: |
         all=2147483647
