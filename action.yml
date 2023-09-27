@@ -60,11 +60,12 @@ runs:
     - name: Escape single quotes
       id: safe-strings
       uses: actions/github-script@v3
+      env:
+        BASE_REF_ARG: ${{ github.event.inputs.base_ref }}
+        HEAD_REF_ARG: ${{ github.event.inputs.head_ref }}
+        PAYLOAD_ARG: ${{ github.event.inputs.client_payload }}
+        URL_ARG: ${{ github.event.inputs.client_payload }} 
       with:
-        base_ref_arg: ${{ github.event.inputs.base_ref }}
-        head_ref_arg: ${{ github.event.inputs.head_ref }}
-        payload_arg: ${{ github.event.inputs.client_payload }}
-        url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
           try {
             function convertToSafeString(input) {
@@ -75,16 +76,18 @@ runs:
               return (input || '').replace(/'/g, "\\'");
             };
 
-            const base_ref = escapeApostrophe(core.getInput('base_ref_arg'));
-            const head_ref = escapeApostrophe(core.getInput('head_ref_arg'));
-            const url = convertToSafeString(core.getInput('url_arg'));
-            const client_payload = convertToSafeString(core.getInput('payload_arg'));
+            const base_ref = escapeApostrophe(process.env.BASE_REF_ARG);
+            const head_ref = escapeApostrophe(process.env.HEAD_REF_ARG);
+            const url = convertToSafeString(process.env.URL_ARG);
+            const client_payload = convertToSafeString(process.env.PAYLOAD_ARG);
+
             core.setOutput('base_ref', base_ref);
             core.setOutput('head_ref', head_ref);
             core.setOutput('url', url);
             core.setOutput('client_payload', client_payload);
+
           } catch (err) {
-            core.setFailed(`Failed producing safe string: ${err}`);
+            core.error(`Failed producing safe string: ${err}`);
             process.exit(1);
           }
 
