@@ -74,7 +74,7 @@ runs:
             function escapeApostrophe(input) {
               return (input || '').replace(/'/g, "\\'");
             };
-  
+
             const base_ref = escapeApostrophe(core.getInput('base_ref_arg'));
             const head_ref = escapeApostrophe(core.getInput('head_ref_arg'));
             const url = convertToSafeString(core.getInput('url_arg'));
@@ -85,6 +85,7 @@ runs:
             core.setOutput('client_payload', client_payload);
           } catch (err) {
             core.setFailed(`Failed producing safe string: ${err}`);
+            process.exit(1);
           }
 
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
