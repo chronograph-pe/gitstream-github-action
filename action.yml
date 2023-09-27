@@ -64,7 +64,7 @@ runs:
         BASE_REF_ARG: ${{ github.event.inputs.base_ref }}
         HEAD_REF_ARG: ${{ github.event.inputs.head_ref }}
         PAYLOAD_ARG: ${{ github.event.inputs.client_payload }}
-        URL_ARG: ${{ github.event.inputs.client_payload }} 
+        URL_ARG: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
       with:
         script: |
           try {
