@@ -66,6 +66,27 @@ runs:
         payload_arg: ${{ github.event.inputs.client_payload }}
         url_arg: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
         script: |
+          try {
+            function convertToSafeString(input) {
+              return (input || '').replace(/['`]/g, "\\$&");
+          };
+
+            function escapeApostrophe(input) {
+              return (input || '').replace(/'/g, "\\'");
+            };
+
+            const base_ref = escapeApostrophe(core.getInput('base_ref_arg'));
+            const head_ref = escapeApostrophe(core.getInput('head_ref_arg'));
+            const url = convertToSafeString(core.getInput('url_arg'));
+            const client_payload = convertToSafeString(core.getInput('payload_arg'));
+            core.setOutput('base_ref', base_ref);
+            core.setOutput('head_ref', head_ref);
+            core.setOutput('url', url);
+            core.setOutput('client_payload', client_payload);
+          } catch (err) {
+            core.error(`Failed producing safe string: ${err}`);
+            process.exit(1);
+          }
           function convertToSafeString(input) {
             return (input || '').replace(/['`]/g, "\\$&");
           };
