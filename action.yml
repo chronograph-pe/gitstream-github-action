@@ -64,25 +64,24 @@ runs:
         URL_ARG: ${{ fromJSON(fromJSON(github.event.inputs.client_payload)).headHttpUrl || fromJSON(fromJSON(github.event.inputs.client_payload)).repoUrl }}
       with:
         script: |
-          try {
-            function convertToSafeString(input) {
-              return (input || '').replace(/['`]/g, "\\$&");
-            };
-            function escapeApostrophe(input) {
-              return (input || '').replace(/'/g, "\\'");
-            };
-            const base_ref = escapeApostrophe(process.env.BASE_REF_ARG);
-            const head_ref = escapeApostrophe(process.env.HEAD_REF_ARG);
-            const url = convertToSafeString(process.env.URL_ARG);
-            const client_payload = convertToSafeString(process.env.PAYLOAD_ARG);
-            core.setOutput('base_ref', base_ref);
-            core.setOutput('head_ref', head_ref);
-            core.setOutput('url', url);
-            core.setOutput('client_payload', client_payload);
-          } catch (err) {
-            core.error(`Failed producing safe string: ${err}`);
-            process.exit(1);
-          }
+          function convertToSafeString(input) {
+            return (input || '').replace(/['`]/g, "\\$&");
+          };
+          function escapeApostrophe(input) {
+            return (input || '').replace(/'/g, "\\'");
+          };
+          const base_ref = escapeApostrophe(process.env.BASE_REF_ARG);
+          core.info(`base_ref: ${base_ref}`);
+          const head_ref = escapeApostrophe(process.env.HEAD_REF_ARG);
+          core.info(`head_ref: ${head_ref}`);
+          const url = convertToSafeString(process.env.URL_ARG);
+          core.info(`url: ${url}`);
+          const client_payload = convertToSafeString(process.env.PAYLOAD_ARG);
+          core.info(`client_payload: ${client_payload}`);
+          core.setOutput('base_ref', base_ref);
+          core.setOutput('head_ref', head_ref);
+          core.setOutput('url', url);
+          core.setOutput('client_payload', client_payload);
     - if: ${{ steps.cache-gitstream-results.outputs.cache-hit != 'true' }}
       run: |
         all=2147483647
